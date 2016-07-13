@@ -9,11 +9,9 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-//TODO: Implement Instance Managing
-
 /**
- * FragmentClass for map fragment
- * Shows a webview with Leaflet
+ * FragmentClass for a map fragment
+ * Shows a webview containing the index.html (which loads leaflet).
  */
 public class MapFragment extends Fragment {
 
@@ -21,30 +19,37 @@ public class MapFragment extends Fragment {
     View view;
 
     /**
-     * Required empty constructor
+     * Required empty constructor.
      */
     public MapFragment() {
     }
 
+    /**
+     * Creates a new instance of MapFragment.
+     * @return frg
+     */
     public static Fragment newInstance() {
         MapFragment frg = new MapFragment();
         return frg;
     }
 
+    /**
+     * Called when a fragment gets created.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
     /**
-     * Called on first creation of the fragment
-     * Connects WebView and WebView settings
+     * Called on first creation of the fragment.
+     * Connects WebView and WebView settings.
      * @param inflater
      * @param container
      * @param savedInstanceState
      * @return view
      */
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -52,7 +57,6 @@ public class MapFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_map, container, false);
         webView = (WebView) view.findViewById(R.id.webview);
         webView.setWebViewClient(new WebViewClient());
-        webView.addJavascriptInterface(new StartActivity.WebInterface(), "Android");
 
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);

@@ -21,12 +21,11 @@ import com.google.android.gms.location.LocationServices;
 
 import com.google.android.gms.location.ActivityRecognition;
 
-//TODO: Android 6.0 Compatibility
-
 /**
- * LocationService / registered in Manifest
+ * LocationService for location and activity recognition. Is registered in Manifest.
+ *
+ * Adapted from the old implementation of Sebastian Drost and Matthias Stein.
  */
-
 public class LocationService extends IntentService {
 
     private static MyLocationListener myLocationListener;
@@ -36,12 +35,15 @@ public class LocationService extends IntentService {
     private static final String DATA = "gierthhensen.hsbo.org.bewegungstrackerduisburg.DATA";
     private Integer trackingRate;
 
+    /**
+     * LocationService constructor.
+     */
     public LocationService() {
         super("Location Service");
     }
 
     /**
-     * Handles incoming intents
+     * Handles incoming intents.
      * @param intent
      */
     @Override
@@ -66,7 +68,7 @@ public class LocationService extends IntentService {
     }
 
     /**
-     * Sends location as intent
+     * Sends location as intent.
      * @param location
      */
     public void sendLocation(Location location) {
@@ -78,7 +80,7 @@ public class LocationService extends IntentService {
     }
 
     /**
-     * LocationListener which calls GoogleAPIs for location via GPS
+     * LocationListener which introduces GoogleAPIs for location via GPS.
      */
     private class MyLocationListener implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<Status> {
 
@@ -90,6 +92,10 @@ public class LocationService extends IntentService {
         private long UPDATE_in_MS = trackingRate;
 
 
+        /**
+         * Listener for incoming information.
+         * @param locationService
+         */
         public MyLocationListener(LocationService locationService) {
 
             myLocationService = locationService;
@@ -106,7 +112,7 @@ public class LocationService extends IntentService {
         }
 
         /**
-         * send request when connected to GoogleAPI
+         * Sends request when connected to GoogleAPI.
          * @param bundle
          */
         @Override
@@ -135,27 +141,43 @@ public class LocationService extends IntentService {
                     .requestActivityUpdates(myGoogleApiClient, UPDATE_in_MS*1000, getActivityIntent()).setResultCallback(this);
         }
 
+        /**
+         * Called when connection gets suspended. Not implemented yet.
+         * @param intent
+         */
         @Override
         public void onConnectionSuspended(int intent) {
             //TODO: On Suspend
         }
 
+        /**
+         * Called when connection failes. Not implemented yet.
+         * @param connectionResult
+         */
         @Override
         public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
             //TODO: When connection failed
         }
 
+        /**
+         * Sets the trackingRate for GPS tracking from persistent settings.
+         * @param trackingRate
+         */
         public void setTrackingRate(int trackingRate) {
             UPDATE_in_MS = trackingRate;
         }
 
+        /**
+         * "Catches" the activity recognition intent.
+         * @return
+         */
         private PendingIntent getActivityIntent() {
             Intent intent = new Intent(getBaseContext(), ActivityIntents.class);
             return PendingIntent.getService(getBaseContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         }
 
         /**
-         * called when location has changed
+         * Called when location has changed.
          * @param location
          */
         @Override
@@ -165,14 +187,14 @@ public class LocationService extends IntentService {
         }
 
         /**
-         * Start getting location updates
+         * Starts location updates.
          */
         public void startLocationUpdates() {
             myGoogleApiClient.connect();
         }
 
         /**
-         * Stop getting location updates
+         * Stops location updates.
          */
         public void stopLocationUpdates() {
             if (myGoogleApiClient.isConnected()) {
@@ -182,6 +204,10 @@ public class LocationService extends IntentService {
             myGoogleApiClient.disconnect();
         }
 
+        /**
+         * Called onResult. Not implemented yet.
+         * @param status
+         */
         @Override
         public void onResult(@NonNull Status status) {
 

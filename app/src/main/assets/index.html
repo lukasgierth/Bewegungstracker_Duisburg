@@ -1,46 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <meta charset=utf-8 />
+    <title>TEST</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <!-- Load Leaflet from CDN-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/leaflet/1.0.0-rc.1/leaflet.css" />
     <script src="https://cdn.jsdelivr.net/leaflet/1.0.0-rc.1/leaflet-src.js"></script>
+
+    <!-- Load Esri Leaflet from CDN -->
     <script src="https://cdn.jsdelivr.net/leaflet.esri/2.0.0/esri-leaflet.js"></script>
+
     <style>
-        body {
-        padding: 0;
-        margin: 0;
-        }
-        html, body, #map {
-        height: 100%;
-        }
+        body { margin:0; padding:0; }
+        #map { position: absolute; top:0; bottom:0; right:0; left:0; }
     </style>
 </head>
-
-
 <body>
+
 <div id="map"></div>
 
 <script>
-// set osm recognition
-var osmAttr = '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>';
-
-// init map element
-var map = L.map('map').setView([45.512, -122.680], 14);
-
-// Add base layer
-var baseLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    attribution: osmAttr
-}).addTo(map);
-
-var trackpoints = L.esri.featureLayer({url: 'https://services.arcgis.com/rOo16HdIMeOBI4Mb/arcgis/rest/services/PDX_Pedestrian_Districts/FeatureServer/0',
-								style: function (){
-									return {color: "#70ca49"}}}).addTo(map);
-
-function addTrackedPoint(lat, lon, uid, date){
-
-    var feature = { "type": "Point", "coordinates": [lat, lon] };
-    trackpoints.addFeature(feature);
+  var map = L.map('map').setView([51.4825,7.216944], 17);
+  L.esri.basemapLayer('Streets').addTo(map);
+  var service = L.esri.featureLayer({
+    url: 'http://services6.arcgis.com/4xcXhPaJrA6efO9w/arcgis/rest/services/Bewegungstracker/FeatureServer/0'
+  }).addTo(map);
+  service.query().bounds(function (error, latlngbounds) {
+    map.fitBounds(latlngbounds);
+  });
+  var lon
+  var lat
+  var latlng = L.latLng(lat, lon);
+//var latitude = Android.getLatitude();
+//var longitude = Android.getLongitude();
+function updateFeature(latitude,longitude){
+var service = L.esri.featureLayer({
+    url: 'http://services6.arcgis.com/4xcXhPaJrA6efO9w/arcgis/rest/services/Bewegungstracker/FeatureServer/0'
+  })
+var userID = "mh"
+var date = new Date();
+var time = date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()+" Uhr"
+var ddmmyyyy = date.getFullYear()+"-"+date.getMonth()+"-"+date.getDate()
+// Save new Features
+var addFeature = {
+    type: 'Feature',
+    geometry: {
+        type: 'Point',
+        coordinates: [longitude, latitude]
+    },
+    properties: {
+        UserID: userID,
+        Date: ddmmyyyy,
+        Time: time,
+        Vehicle: '',
+        SessionID: ''
+    }
+};
+service.addFeature(addFeature, function(error, response){
+    if(error){
+      console.log('error creating feature ' + error.message);
+    } else {
+      console.log('Successfully created feature with id ' + response.objectId);
+    }
+});
+  service.query().bounds(function (error, latlngbounds) {
+    map.fitBounds(latlngbounds);
+  });
 }
+service.bindPopup(function (popup) {
+    return L.Util.template('<p>Punktnummer: {OBJECTID}<br>Uhrzeit: {Time}<br> Datum: {Date}<br> User: {UserID}</p>', popup.feature.properties);
+  });
 </script>
 </body>
 

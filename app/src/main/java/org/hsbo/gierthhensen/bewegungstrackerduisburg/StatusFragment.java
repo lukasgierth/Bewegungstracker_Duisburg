@@ -15,25 +15,34 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 /**
- * FragmentClass for the status fragment.
- * Show the state of the GPS tracking service
+ * FragmentClass for the status/settings fragment.
+ * It is possible to set the tracking rate here.
  */
 public class StatusFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     View view;
     public static final String UPDATE_INTERVAL = "updateInterval";
+
     /**
-     * Required empty public constructor
+     * Required empty public constructor.
      */
     public StatusFragment() {
     }
 
 
+    /**
+     * Creates a new instance of StatusFragment.
+     * @return frg
+     */
     public static Fragment newInstance() {
         StatusFragment frg = new StatusFragment();
         return frg;
     }
 
+    /**
+     * Called when a fragment is created.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -48,11 +57,11 @@ public class StatusFragment extends Fragment implements AdapterView.OnItemSelect
     }
 
     /**
-     * On first creation of the fragment
+     * Called on first creation of the fragment.
      * @param inflater
      * @param container
      * @param savedInstanceState
-     * @return
+     * @return view
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,7 +71,7 @@ public class StatusFragment extends Fragment implements AdapterView.OnItemSelect
 
         /*
         Spinner Element
-*/
+        */
         Spinner spinner = (Spinner) view.findViewById(R.id.spinner_interval);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.interval_array, android.R.layout.simple_spinner_item);
@@ -73,6 +82,11 @@ public class StatusFragment extends Fragment implements AdapterView.OnItemSelect
         return view;
     }
 
+
+    /**
+     * Called when connected activity is already present.
+     * @param savedInstanceState
+     */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -81,11 +95,22 @@ public class StatusFragment extends Fragment implements AdapterView.OnItemSelect
         }
     }
 
+    /**
+     * Checks state of saved instances of this fragment.
+     * @param outState
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
 
+    /**
+     * Called when an item from the spinner element gets selected.
+     * @param parent
+     * @param view
+     * @param pos
+     * @param id
+     */
     public void onItemSelected(AdapterView<?> parent, View view,
                                int pos, long id) {
 
@@ -112,6 +137,10 @@ public class StatusFragment extends Fragment implements AdapterView.OnItemSelect
         Toast.makeText(getActivity(), "GPS Interval:  "+interval, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Called when no element gets selected. Does nothing at this moment.
+     * @param parent
+     */
     public void onNothingSelected(AdapterView<?> parent) {
         // Another interface callback
     }

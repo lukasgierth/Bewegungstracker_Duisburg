@@ -10,7 +10,7 @@ import com.google.android.gms.location.DetectedActivity;
 import java.util.ArrayList;
 
 /**
- * Internal Service for activity recognition
+ * Internal Service for activity recognition. Does only send intents.
  */
 public class ActivityIntents extends IntentService{
 
@@ -22,6 +22,10 @@ public class ActivityIntents extends IntentService{
         super("ActivityIntents");
     }
 
+    /**
+     * Handles the incoming intents and sends the detected activity in a new intent.
+     * @param intent
+     */
     @Override
     protected void onHandleIntent(Intent intent) {
         ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);

@@ -29,7 +29,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.google.android.gms.location.DetectedActivity;
@@ -37,9 +41,8 @@ import com.google.android.gms.location.DetectedActivity;
 import java.util.ArrayList;
 
 /**
- * Created by Lukas Gierth on 26.05.16.
+ * Main activity for this android application
  */
-
 @SuppressLint({"ShowToast"})
 public class StartActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -57,9 +60,6 @@ public class StartActivity extends AppCompatActivity
 
     public static final String UPDATE_INTERVAL = "updateInterval";
 
-    private static String latitude;
-    private static String longitude;
-
     // same as in LocationService - unique name
     private static final String BROADCAST = "gierthhensen.hsbo.org.bewegungstrackerduisburg.BROADCAST";
     private static final String DATA = "gierthhensen.hsbo.org.bewegungstrackerduisburg.DATA";
@@ -67,7 +67,7 @@ public class StartActivity extends AppCompatActivity
     private static final String DATA_ACTIVITY = "gierthhensen.hsbo.org.bewegungstrackerduisburg.DATA_ACTIVITY";
 
     /**
-     * Is called on first creation of activity
+     * Called on first creation of activity.
      * @param savedInstanceState
      */
     @Override
@@ -110,13 +110,13 @@ public class StartActivity extends AppCompatActivity
             transaction.add(R.id.fragment_container, myStatusFragment, "fragment_status");
             transaction.add(R.id.fragment_container, myMapFragment, "fragment_map");
 
-            transaction.hide(myMapFragment);
+            transaction.hide(myStatusFragment);
             transaction.commit();
         }
     }
 
     /**
-     * Press back on Navigation Drawer
+     * Called when "back" is pressed in navigation drawer.
      */
     @Override
     public void onBackPressed() {
@@ -129,9 +129,9 @@ public class StartActivity extends AppCompatActivity
     }
 
     /**
-     * Called when OptionsMenu is created
+     * Called when OptionsMenu is created.
      * @param menu
-     * @return
+     * @return true
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -141,9 +141,9 @@ public class StartActivity extends AppCompatActivity
     }
 
     /**
-     * Select items in Settings bar (top)
+     * Select items in Settings bar (top).
      * @param item
-     * @return
+     * @return selected item
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -161,9 +161,9 @@ public class StartActivity extends AppCompatActivity
     }
 
     /**
-     * Select items in Navigation Drawer
+     * Chooses action for selected item in navigation drawer.
      * @param item
-     * @return
+     * @return true
      */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -182,7 +182,6 @@ public class StartActivity extends AppCompatActivity
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
         }
-        else if (id == R.id.nav_send) {}
 
         return true;
     }
@@ -191,6 +190,12 @@ public class StartActivity extends AppCompatActivity
      * ResponseReceiver Class
      */
     private class ResponseReceiver extends BroadcastReceiver {
+
+        /**
+         * Called when intent is received.
+         * @param context
+         * @param intent
+         */
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -201,9 +206,15 @@ public class StartActivity extends AppCompatActivity
     }
 
     /**
-     * Receiver for Activities
+     * Receiver for detected activity intent.
      */
     private class ActivityResponseReceiver extends BroadcastReceiver {
+
+        /**
+         * Called when intent is received
+         * @param context
+         * @param intent
+         */
         @Override
         public void onReceive(Context context, Intent intent) {
             ArrayList<DetectedActivity> detectedActivities = intent.getParcelableArrayListExtra(DATA_ACTIVITY);
@@ -219,9 +230,9 @@ public class StartActivity extends AppCompatActivity
     }
 
     /**
-     * Set String to activityType
+     * Set String to activityType.
      * @param ActivityType
-     * @return
+     * @return detected activity
      */
     public String getDetectedActivity(int ActivityType) {
         switch (ActivityType) {
@@ -247,8 +258,7 @@ public class StartActivity extends AppCompatActivity
     }
 
     /**
-     * Sets TextView to new coordinates
-     * @param
+     * Pushes
      */
     public void updateFeature () {
 
@@ -258,48 +268,33 @@ public class StartActivity extends AppCompatActivity
         String act;
         String lat = String.valueOf(location.getLatitude());
         String lon = String.valueOf(location.getLongitude());
-        latitude = lat;
-        longitude = lon;
+
+        WebView webView = (WebView) findViewById(R.id.webview);
+        webView.setWebViewClient(new WebViewClient());
+
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setSupportZoom(true);
+
 
         if (activity != null){
             act = getDetectedActivity(activity.getType());
+            webView.loadUrl("javascript:updateFeature("+lat+","+lon+");");
             String test = lat + " / " + lon + " / " + act;
             Toast.makeText(this, test , Toast.LENGTH_SHORT).show();
-            //TODO call JS method, push coordinates
         }
 
         else {
+            //act = "AbCD";
+            webView.loadUrl("javascript:updateFeature("+lat+","+lon+");");
             String test = lat + " / " + lon;
             Toast.makeText(this, test, Toast.LENGTH_SHORT).show();
         }
     }
 
-    //get Latitude and Longitude for Js
-    public static class WebInterface {
-        private final Context c = null;
-        Context mContext;
-
-        /** Instantiate the interface and set the context */
-        WebInterface() {
-            mContext = c;
-        }
-
-        /** Get the value of latitude */
-        @JavascriptInterface
-        public String getLatitude() {
-            return latitude;
-        }
-
-        /** Get the value of longitude */
-        @JavascriptInterface
-        public String getLongitude() {
-            return longitude;
-        }
-    }
-
     /**
      * Called when GPS button is pressed
-     * Triggers LocationService
+     * Triggers LocationService/GPS tracking
      */
     public void startGPS() {
 
@@ -376,7 +371,7 @@ public class StartActivity extends AppCompatActivity
 
 
     /**
-     * Switches between status and map
+     * Switches between status and map.
      */
     public void switchFragment(){
 
@@ -402,7 +397,7 @@ public class StartActivity extends AppCompatActivity
     }
 
     /**
-     * Cancels Notifications from this app
+     * Cancels Notification from this app.
      * @param ctx
      * @param notifyId
      */
@@ -413,7 +408,7 @@ public class StartActivity extends AppCompatActivity
     }
 
     /**
-     * TODO: Get interval from settings field
+     * Get tracking interval from preferences
      * @return
      */
     public int getUpdateIntervalFromPreferences() {
@@ -430,6 +425,9 @@ public class StartActivity extends AppCompatActivity
     }
 
 
+    /**
+     * Called when activity stops. Saves tracking interval in preferences.
+     */
     @Override
     protected void onStop() {
         super.onStop();
@@ -440,8 +438,7 @@ public class StartActivity extends AppCompatActivity
     }
 
     /**
-     * called when activity destroyed
-     * Also destroys notification
+     * Called when activity is destroyed. Destroys notification from this app.
      */
     @Override
     public void onDestroy() {
