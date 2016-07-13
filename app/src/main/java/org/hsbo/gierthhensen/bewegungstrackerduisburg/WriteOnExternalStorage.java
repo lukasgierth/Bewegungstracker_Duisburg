@@ -6,7 +6,7 @@ import android.util.Log;
 import java.io.File;
 
 /**
- * Created by Matthias on 08.06.2016.
+ * Write Storage basic implementation
  */
 public class WriteOnExternalStorage {
 
