@@ -10,6 +10,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 /**
+ * @author Lukas Gierth and Matthias Hensen
  * FragmentClass for a map fragment
  * Shows a webview containing the index.html (which loads leaflet).
  */

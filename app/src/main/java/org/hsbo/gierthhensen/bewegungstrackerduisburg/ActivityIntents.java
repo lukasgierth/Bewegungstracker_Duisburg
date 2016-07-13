@@ -10,6 +10,7 @@ import com.google.android.gms.location.DetectedActivity;
 import java.util.ArrayList;
 
 /**
+ * @author Lukas Gierth and Matthias Hensen
  * Internal Service for activity recognition. Does only send intents.
  */
 public class ActivityIntents extends IntentService{

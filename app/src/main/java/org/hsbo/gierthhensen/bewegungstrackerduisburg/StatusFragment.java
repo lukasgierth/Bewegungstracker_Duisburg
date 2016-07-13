@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 /**
+ * @author Lukas Gierth and Matthias Hensen
  * FragmentClass for the status/settings fragment.
  * It is possible to set the tracking rate here.
  */

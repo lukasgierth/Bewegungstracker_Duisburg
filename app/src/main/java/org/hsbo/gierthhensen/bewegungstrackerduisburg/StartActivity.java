@@ -29,8 +29,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -41,6 +39,7 @@ import com.google.android.gms.location.DetectedActivity;
 import java.util.ArrayList;
 
 /**
+ * @author Lukas Gierth and Matthias Hensen
  * Main activity for this android application
  */
 @SuppressLint({"ShowToast"})

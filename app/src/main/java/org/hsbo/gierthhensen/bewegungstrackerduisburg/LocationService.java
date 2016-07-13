@@ -22,6 +22,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.ActivityRecognition;
 
 /**
+ * @author Lukas Gierth, Matthias Hensen, Sebastian Drost, Matthias Stein
  * LocationService for location and activity recognition. Is registered in Manifest.
  *
  * Adapted from the old implementation of Sebastian Drost and Matthias Stein.
